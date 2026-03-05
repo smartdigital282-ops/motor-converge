@@ -11,15 +11,24 @@ app.use(cors());
 const genAI = new GoogleGenerativeAI("AIzaSyBD9MpUQh1zPoJoVorlk5uTU2BB_hEhDQk");
 const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-// 2. Configurar WhatsApp
+// 2. Configurar WhatsApp com Disfarce e Otimização
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: {
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        args: [
+            '--no-sandbox', 
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage' // Evita que o servidor gratuito trave por falta de memória
+        ]
+    },
+    // DISFARCE: Força uma versão web específica para evitar o erro "novo dispositivo não permitido"
+    webVersionCache: {
+        type: 'remote',
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html'
     }
 });
 
-// 3. O NOVO TRUQUE DO QR CODE (Texto Puro)
+// 3. O TRUQUE DO QR CODE (Texto Puro)
 client.on('qr', qr => {
     console.log('\n==================================================');
     console.log('COPIE TODO O TEXTO ABAIXO E COLE NO SITE GERADOR:');
